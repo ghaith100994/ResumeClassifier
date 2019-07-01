@@ -48,8 +48,6 @@ def read_pdf_miner_charts(fileObj):
         layout = device.get_result()
         for lt_obj in layout:
             if isinstance(lt_obj, LTTextBoxHorizontal):
-                #text_dict[id] = lt_obj.get_text()
-                #text_prop_dict[id] = lt_obj
                 id += 1
                 sentences.clear()
                 for line_obj in lt_obj._objs:
@@ -63,8 +61,6 @@ def read_pdf_miner_charts(fileObj):
                             sentences.append(chars.copy())
                 chars_dict[sentences_num]=sentences.copy()
                 sentences_num+=1
-        #page_dict[page_num]=text_prop_dict.copy()
-        #text_prop_dict.clear()
         page_num += 1
     return chars_dict
 
@@ -90,10 +86,7 @@ def read_pdf_miner_texts(fileObj):
         for lt_obj in layout:
             if isinstance(lt_obj, LTTextBoxHorizontal):
                 text_dict[id] = lt_obj.get_text()
-                #text_prop_dict[id] = lt_obj
                 id += 1
-        #page_dict[page_num]=text_prop_dict.copy()
-        #text_prop_dict.clear()
         page_num += 1
     return text_dict
 
