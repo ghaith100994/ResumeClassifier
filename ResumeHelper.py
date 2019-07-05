@@ -38,8 +38,8 @@ def get_url(line):
         url = match.group(0)
     return url
 
-#This function extracts any 'Number' link from a specific text using a regular expression. 
-#The regular expression contains all the forms that the 'Number' link could take.
+#This function extracts any 'Number' from a specific text using a regular expression. 
+#The regular expression contains all the forms that the 'Number' could take.
 def get_number(line):
     number = None
     match = re.search(r'\+?\(?\d{2,4}\)?[\d\s-]{7,}',line)
@@ -47,7 +47,7 @@ def get_number(line):
         number = match.group(0)
     return number
 
-#This function extracts any 'date' link from a specific text using a collection of regular expressions.
+#This function extracts any 'date' from a specific text using a collection of regular expressions.
 
 #The regular expressions contain all the elements of the 'date'.
 #Day: This regular expression contains all the forms that the 'Day' could take.
