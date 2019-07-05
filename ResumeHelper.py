@@ -38,7 +38,7 @@ def get_url(line):
         url = match.group(0)
     return url
 
-#This function extracts any 'Number'from a specific text using a regular expression. 
+#This function extracts any 'Number' from a specific text using a regular expression. 
 #The regular expression contains all the forms that the 'Number' could take.
 def get_number(line):
     number = None
