@@ -1,8 +1,11 @@
 import ResumeHelper
 import ResumeSegmenter
+import numpy as np
 from collections import defaultdict
 
-def sent_features(sentences_info,pharagraph_num,result):
+segmnetation_values=[]
+
+def sent_features(sentences_info,pharagraph_num,x_result,y_result):
     Contain_email=False
     Contain_Phone=False
     Contain_URL=False
@@ -19,9 +22,9 @@ def sent_features(sentences_info,pharagraph_num,result):
         pre_Font_Size=0
         pre_Font_Family="<START>"
     else:
-        prevtag=result[-1]
-        pre_Font_Size=result[-1]["Font_Size"]
-        pre_Font_Family=result[-1]["Font_Family"]
+        prevtag=y_result[-1]
+        pre_Font_Size=x_result[-1]["Font_Size"]
+        pre_Font_Family=x_result[-1]["Font_Family"]
     for sent_info in sentences_info:
         for sub_sent in sent_info[0]:
             if ResumeHelper.get_url(sub_sent)!=None:
@@ -77,3 +80,68 @@ def sent_features(sentences_info,pharagraph_num,result):
     features["pre_Font_Size"]=pre_Font_Size
     features["pre_Font_Family"]=pre_Font_Family
     return features
+
+def splitdata(data):
+    x_data=[]
+    y_data=[]
+    for resume in data:
+        for pharagraph_num in data[resume]:
+            x_data.append(sent_features(x_data[resume][pharagraph_num][0:-1],pharagraph_num,None))
+            y_data.append(data[resume][pharagraph_num][-1])
+    return x_data,y_data
+
+def num_data_y(y_data):
+    segmnetation_values = np.unique(y_data)
+    copyof_y_data=y_data.copy()
+    i=0
+    for i in range(len(copyof_y_data)):
+        class_is=copyof_y_data[i]
+        itemindex = np.where(segmnetation_values==class_is)
+        copyof_y_data[i]=itemindex[0][0]
+    return copyof_y_data
+
+def num_data_x(x_data):
+    copyof_x_data=[]
+    for feat in x_data:
+        Normalized_Feat=[]
+        if (feat['Contain_Date']==False and feat['Contain_Phone']==False and feat['Contain_URL']==False
+            and feat['Contain_email']==False):
+            Normalized_Feat.append(0)
+        else:
+            Normalized_Feat.append(1)
+        if(feat['IsEducationSegment']==False):
+            Normalized_Feat.append(0)
+        else:
+            Normalized_Feat.append(1)
+        if(feat['IsProjectSegment']==False):
+            Normalized_Feat.append(0)
+        else:
+            Normalized_Feat.append(1)
+        if(feat['IsSkillSegment']==False):
+            Normalized_Feat.append(0)
+        else:
+            Normalized_Feat.append(1)
+        if(feat['IsWorkSegment']==False):
+            Normalized_Feat.append(0)
+        else:
+            Normalized_Feat.append(1)
+        if(feat['Font_Family'].__contains__("Bold")):
+            Normalized_Feat.append(1)
+        else:
+            Normalized_Feat.append(0)
+        if(feat['pre_Font_Family'].__contains__("Bold")):
+            Normalized_Feat.append(1)
+        else:
+            Normalized_Feat.append(0)
+        Normalized_Feat.append(feat['Font_Size'])
+        Normalized_Feat.append(feat['pre_Font_Size'])
+        Normalized_Feat.append(feat['Word_Count'])
+        Normalized_Feat.append(feat['PhargraphNumber'])
+        if(feat['prevtag']=='<START>'):
+            Normalized_Feat.append(-1)
+        else:
+            class_is=feat['prevtag']
+            itemindex = np.where(segmnetation_values==class_is)
+            Normalized_Feat.append(itemindex[0][0])
+        copyof_x_data.append(Normalized_Feat.copy())
+
