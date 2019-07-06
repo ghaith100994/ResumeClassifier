@@ -1,4 +1,5 @@
 import os
+import pickle
 import ResumeSegmenter
 
 #This function takes two paramters.
@@ -57,3 +58,9 @@ def createdataset(labeled_files_dic,pdf_files_dic):
         for index in range(len(y)):
             data[cv][index].append(y[index])
     return data
+
+
+def dumpdataset(labeled_files_dic,pdf_files_dic):
+    data=createdataset(labeled_files_dic,pdf_files_dic)
+    with open('PersonalResume.pickle', 'wb') as handle:
+        pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)

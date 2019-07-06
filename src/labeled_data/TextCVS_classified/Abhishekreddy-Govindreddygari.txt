@@ -1,0 +1,15 @@
+B-Personal_Information
+B-Skills
+B-Personal_Information
+B-Skills
+B-Experience
+I-Experience
+I-Experience
+B-Education
+I-Education
+I-Education
+B-Skills
+I-Skills
+O
+B-Skills
+I-Skills
