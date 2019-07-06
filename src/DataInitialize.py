@@ -64,3 +64,7 @@ def dumpdataset(labeled_files_dic,pdf_files_dic):
     data=createdataset(labeled_files_dic,pdf_files_dic)
     with open('PersonalResume.pickle', 'wb') as handle:
         pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+
+def loaddataset():
+    with open('PersonalResume.pickle', 'rb') as handle:
+        return pickle.load(handle)
