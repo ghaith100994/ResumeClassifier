@@ -1,16 +1,30 @@
+#We used the following libraries:
+
+#nltk: Natural Language Tool Kit, we used this library for tokenization.
+#csv: Comma Separated Value, we used this library for dealing with CSV files.
+#re: This library used for applying Regular Expression operations, for example (re.search) to find a specific text.
+#collections: This library used for getting the default dictionary.
+
+#pdfminer: This library used for dealing with PDF files.
+#PDFParser: This library used for fetches the data from this PDF file.
+#PDFDocument: This library used for stores the parsing result into a ducument.
+#PDFResourceManager: This library used for stores shared resources of the PDF file such as font's size and type.
+#PDFDevice: This library used for translates the PDFResourceManager result into layouts.
+#PDFPageInterpreter: This library used for process the page contents.
+#PDFPage: This library used for converts the document which contains the data into pages using the (create_pages).
+
 import nltk
 import csv
 import re
 import pdfminer
-from io import StringIO
 from collections import defaultdict
 from pdfminer.pdfparser import PDFParser
 from pdfminer.pdfdocument import PDFDocument
-from pdfminer.pdfpage import PDFPage,PDFTextExtractionNotAllowed
-from pdfminer.pdfinterp import PDFResourceManager,PDFPageInterpreter
+from pdfminer.pdfpage import PDFPage, PDFTextExtractionNotAllowed
+from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.pdfdevice import PDFDevice
 from pdfminer.layout import LAParams, LTTextBox, LTTextLine, LTFigure, LTTextBoxHorizontal, LTTextBoxVertical
-from pdfminer.converter import PDFPageAggregator,TextConverter
+from pdfminer.converter import PDFPageAggregator, TextConverter
 
 #This function takes one paramter which is a file.
 #Opens this file as 'CSV' file.
@@ -32,12 +46,6 @@ def read_csv(input_file):
     return reader
 
 #This function takes one paramter which is a 'PDF' file.
-#Fetches the data from this file using (PDFParser) library.
-#Stores the parsing result into a ducument using (PDFDocument) library.
-#Stores shared resources of this file such as font's size and type using (PDFResourceManager) library.
-#Translates the PDFResourceManager result into layouts using (PDFDevice) library.
-#Process the page contents using (PDFPageInterpreter) library.
-#Converts the document which contains the data into pages using (PDFPage) library, (create_pages) function for specific.
 #for each line in the PDF it reads char by char.
 #Returns each char with its font size and type.
 def read_pdf_miner_chars(fileObj):
@@ -80,12 +88,6 @@ def read_pdf_miner_chars(fileObj):
     return chars_dict
 
 #This function takes one paramter which is a 'PDF' file.
-#Fetches the data from this file using (PDFParser) library.
-#Stores the parsing result into a ducument using (PDFDocument) library.
-#Stores shared resources of this file such as fonts using (PDFResourceManager) library.
-#Translates the PDFResourceManager result into charts using (PDFDevice) library.
-#Process the page contents using (PDFPageInterpreter) library.
-#Converts the document which contains the data into pages using (PDFPage) library, (create_pages) function for sure.
 #for each sentence in the PDF it reads this sentence.
 #Returns the PDF file as list of lists.
 def read_pdf_miner_texts(fileObj):
@@ -115,12 +117,6 @@ def read_pdf_miner_texts(fileObj):
     return text_dict
 
 #This function takes one paramter which is a 'PDF' file.
-#Fetches the data from this file using (PDFParser) library.
-#Stores the parsing result into a ducument using (PDFDocument) library.
-#Stores shared resources of this file such as fonts using (PDFResourceManager) library.
-#Translates the PDFResourceManager result into charts using (PDFDevice) library.
-#Process the page contents using (PDFPageInterpreter) library.
-#Converts the document which contains the data into pages using (PDFPage) library, (create_pages) function for sure.
 #for each object layout in the PDF it stores the object and its dimensions.
 #Returns each object with its dimensions.
 def read_pdf_miner_layouts(fileObj):

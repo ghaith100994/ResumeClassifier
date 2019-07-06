@@ -1,3 +1,8 @@
+#We used two libraries:
+#os: This library used for get operating system operations.
+#pickle: This library used for saving and loading files and classifiers.
+
+#We also used the "ResumeSegmenter" class that we have created.
 import os
 import pickle
 import ResumeSegmenter
@@ -31,7 +36,7 @@ def getfilelist(path, extension=None):
 #This function takes two paramters.
 #First paramter is the labeled CVs as a dictionary.
 #Second paramter is the raw CVs as a dictionary.
-#We get both dictionaries by passing them to the previous function (getfilelist).
+#We get all the file names of both dictionaries by passing them to the previous function (getfilelist).
 
 #for each file of raw CVs we call (read_pdf_miner_chars) from the (ResumeSegmenter) class in order to get the unnormalized dictionary .
 #then we normalize and clean that dictionary by calling (text_normalize) & (update_text_normalize) from the same class (ResumeSegmenter).
@@ -59,12 +64,17 @@ def createdataset(labeled_files_dic,pdf_files_dic):
             data[cv][index].append(y[index])
     return data
 
-
+#This function takes two parameters.
+#First paramter is the labeled CVs dictionary.
+#Second paramter is the raw CVs dictionary.
+#Calls the previous function to get the data and save it.
 def dumpdataset(labeled_files_dic,pdf_files_dic):
     data=createdataset(labeled_files_dic,pdf_files_dic)
     with open('PersonalResume.pickle', 'wb') as handle:
         pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
+##This function takes no parameter.
+#Loads the data by using (pickle) library.
 def loaddataset():
     with open('PersonalResume.pickle', 'rb') as handle:
         return pickle.load(handle)
