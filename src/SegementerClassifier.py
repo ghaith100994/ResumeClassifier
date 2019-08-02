@@ -1,43 +1,55 @@
-import ResumeHelper
-import ResumeSegmenter
+#We used the following libraries:
+
+#numpy: This library used for dealing with numeric values and all the functions which using these values.
+#collections: This library used for getting the default dictionary.
+
+#We also used the "ResumeHelper" and "ResumeSegmenter" classes that we have created.
+
 import numpy as np
 from collections import defaultdict
 
-segmnetation_values=[]
+import ResumeHelper
+import ResumeSegmenter
 
-def sent_features(sentences_info,pharagraph_num,x_result,y_result):
+#This function takes 4 parameters.
+#First parameter is which contains a group of sentences with their font size and type.
+#Second parameter is paragraph number.
+#Third parameter is the previous sentences feature extraction of this sentence which contains a list of features dictionaries.
+#Fourth parameter is the previous sentences segmentation values.
+#Returns a dictionary of features, where the key represents the feature name.
+def sentence_features_extraction(sentences_info,paragraph_num,prev_x_result,prev_y_result):
     Contain_email=False
     Contain_Phone=False
     Contain_URL=False
     Contain_Date=False
-    IsWorkSegment=False
+    IsExperienceSegment=False
     IsSkillSegment=False
     IsEducationSegment=False
     IsProjectSegment=False
     Font_Size=defaultdict(int)
     Font_Family=defaultdict(int)
     Word_Count=0
-    if pharagraph_num==0:
+    if paragraph_num==0:
         prevtag="<START>"
         pre_Font_Size=0
         pre_Font_Family="<START>"
     else:
-        prevtag=y_result[-1]
-        pre_Font_Size=x_result[-1]["Font_Size"]
-        pre_Font_Family=x_result[-1]["Font_Family"]
+        prevtag=prev_y_result[-1]
+        pre_Font_Size=prev_x_result[-1]["Font_Size"]
+        pre_Font_Family=prev_x_result[-1]["Font_Family"]
     for sent_info in sentences_info:
         for sub_sent in sent_info[0]:
             if ResumeHelper.get_url(sub_sent)!=None:
                 Contain_URL=True
             if ResumeHelper.get_email(sub_sent)!=None:
                 Contain_email=True
-            if ResumeHelper.get_date(sub_sent)!=None:
+            if ResumeHelper.get_date(sub_sent.lower())!=None:
                 Contain_Date=True
             if ResumeHelper.get_number(sub_sent)!=None:
                 Contain_Phone=True
             for word in ResumeSegmenter.work_experience_segment:
                 if sub_sent.lower().__contains__(word.lower()):
-                    IsWorkSegment=True
+                    IsExperienceSegment=True
             for word in ResumeSegmenter.skill_segment:
                 if sub_sent.lower().__contains__(word.lower()):
                     IsSkillSegment=True
@@ -69,9 +81,9 @@ def sent_features(sentences_info,pharagraph_num,x_result,y_result):
     features["Contain_Date"]=Contain_Date
     features["Contain_URL"]=Contain_URL
     features["prevtag"]=prevtag
-    features["PhargraphNumber"]=pharagraph_num
+    features["PhargraphNumber"]=paragraph_num
     features["Word_Count"]=Word_Count
-    features["IsWorkSegment"]=IsWorkSegment
+    features["IsWorkSegment"]=IsExperienceSegment
     features["IsSkillSegment"]=IsSkillSegment
     features["IsEducationSegment"]=IsEducationSegment
     features["IsProjectSegment"]=IsProjectSegment
@@ -81,16 +93,22 @@ def sent_features(sentences_info,pharagraph_num,x_result,y_result):
     features["pre_Font_Family"]=pre_Font_Family
     return features
 
+#This function takes one parameter which is the data we have already.
+#Returns the data splitted into two parts.
+#x_data which represents the features.
+#y_data which represents the labeld value.
 def splitdata(data):
     x_data=[]
     y_data=[]
     for resume in data:
         for pharagraph_num in data[resume]:
-            x_data.append(sent_features(data[resume][pharagraph_num][0:-1],pharagraph_num,x_data,y_data))
+            x_data.append(sentence_features_extraction(data[resume][pharagraph_num][0:-1], pharagraph_num, x_data, y_data))
             y_data.append(data[resume][pharagraph_num][-1])
     return x_data,y_data
 
-def num_data_y(y_data):
+#This function takes one parameter which is the y_data splitted by the "splitdata" function.
+#Returns this data which represents the labeled values as numeric values.
+def numeric_data_y(y_data):
     segmnetation_values = np.unique(y_data)
     copyof_y_data=y_data.copy()
     i=0
@@ -100,7 +118,9 @@ def num_data_y(y_data):
         copyof_y_data[i]=itemindex[0][0]
     return copyof_y_data
 
-def num_data_x(x_data):
+#This function takes one parameter which is the x_data splitted by the "splitdata" function.
+#Returns this data which represents the featues values as numeric values.
+def numeric_data_x(x_data):
     copyof_x_data=[]
     for feat in x_data:
         Normalized_Feat=[]
@@ -145,4 +165,3 @@ def num_data_x(x_data):
             Normalized_Feat.append(itemindex[0][0])
         copyof_x_data.append(Normalized_Feat.copy())
     return  copyof_x_data
-
