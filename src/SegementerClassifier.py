@@ -86,7 +86,7 @@ def splitdata(data):
     y_data=[]
     for resume in data:
         for pharagraph_num in data[resume]:
-            x_data.append(sent_features(x_data[resume][pharagraph_num][0:-1],pharagraph_num,None))
+            x_data.append(sent_features(data[resume][pharagraph_num][0:-1],pharagraph_num,x_data,y_data))
             y_data.append(data[resume][pharagraph_num][-1])
     return x_data,y_data
 
@@ -144,4 +144,5 @@ def num_data_x(x_data):
             itemindex = np.where(segmnetation_values==class_is)
             Normalized_Feat.append(itemindex[0][0])
         copyof_x_data.append(Normalized_Feat.copy())
+    return  copyof_x_data
 
