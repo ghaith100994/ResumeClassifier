@@ -77,3 +77,8 @@ def get_date(line):
 
 #datetypeCM="(([Jj][aA][nN][uU][aA][rR][Yy])|([Ff][eE][Bb][rR][uU][aA][rR][Yy])|([mM][aA][rR][cC][hH])|([aA][pP][rR][iI][lL])|([mM][aA][Yy])|([Jj][uU][nN][eE])|([Jj][uU][lL][Yy])|([aA][uU][gG][uU][sS][tT])|([sS][eE][pP][Tt][eE][mM][Bb][eE][rR])|([oO][cC][tT][oO][Bb][eE][rR])|([nN][oO][vV][eE][mM][Bb][eE][rR])|([dD][eE][cC][eE][mM][Bb][eE][rR]))"
 #datetypeMMM="(([jJ][Aa][nN])|([Ff][eE][bB])|([Mm][Aa][Rr])|([Aa][Pp][Rr])|([Mm][Aa][yY])|([jJ][Uu][nN])|([jJ][Uu][Ll])|([Aa][Uu][gG])|([Ss][eE][Pp])|([Oo][Cc][tT])|([nN][Oo][Vv])|([Dd][eE][Cc]))"
+
+
+def merge(list1, list2): 
+    merged_list = [(list1[i], list2[i]) for i in range(0, len(list1))] 
+    return merged_list
