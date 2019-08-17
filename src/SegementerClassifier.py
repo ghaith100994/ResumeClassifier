@@ -120,7 +120,8 @@ def numeric_data_y(y_data):
 
 #This function takes one parameter which is the x_data splitted by the "splitdata" function.
 #Returns this data which represents the featues values as numeric values.
-def numeric_data_x(x_data):
+def numeric_data_x(x_data,y_data):
+    segmnetation_values = np.unique(y_data)
     copyof_x_data=[]
     for feat in x_data:
         Normalized_Feat=[]
@@ -165,3 +166,15 @@ def numeric_data_x(x_data):
             Normalized_Feat.append(itemindex[0][0])
         copyof_x_data.append(Normalized_Feat.copy())
     return  copyof_x_data
+
+def prepare_data_for_training(data):
+    x_data=[]
+    y_data=[]
+    for resume in data:
+        for pharagraph_num in data[resume]:
+            x_data.append(sentence_features_extraction(data[resume][pharagraph_num][0:-1],pharagraph_num,x_data,y_data))
+            y_data.append(data[resume][pharagraph_num][-1])
+    X=numeric_data_x(x_data,y_data)
+    Y=numeric_data_y(y_data)
+    return X,Y
+
