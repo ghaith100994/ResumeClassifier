@@ -3,8 +3,10 @@
 #pickle: This library used for saving and loading files and classifiers.
 
 #We also used the "ResumeSegmenter" class that we have created.
+
 import os
 import pickle
+
 import ResumeSegmenter
 
 #This function takes two paramters.
@@ -14,8 +16,8 @@ import ResumeSegmenter
 #Returns all the files with the specified extension if its passed or all the files in case it was default as a list.
 #in case there is no folder/s in the specified folder path it returns only its files.
 #in case there is a folder or multiple folders inside the specified folder path it will returns all their files.
-def getfilelist(path, extension=None):
-    dir=os.listdir(path)
+def getFileList(path, extension = None):
+    dirs = os.listdir(path)
     filenames = []
     for i in next(os.walk(path))[2]:
         if (extension):
@@ -23,8 +25,8 @@ def getfilelist(path, extension=None):
                 filenames.append(os.path.join(path, i))
         else:
             filenames.append(os.path.join(path, i))
-    for d in dir:
-        new_path=os.path.join(path, d)
+    for dir in dirs:
+        new_path = os.path.join(path, dir)
         for i in next(os.walk(new_path))[2]:
             if (extension):
                 if i.endswith(extension):
@@ -43,23 +45,26 @@ def getfilelist(path, extension=None):
 
 #Returns a dictionary concatinating both dictionaries. 
 #in other words it returns each sentence of the CV with its font size and type in addition to the manually labeled value.
-def createdataset(labeled_files_dic,pdf_files_dic):
-    data={}
-    y_data={}
-    pdf_files=getfilelist(pdf_files_dic)
-    labeled_files=getfilelist(labeled_files_dic)
+def createDataset(labeled_files_dict, pdf_files_dict):
+    data = {}
+    y_data = {}
+    pdf_files = getFileList(pdf_files_dict)
+    labeled_files = getFileList(labeled_files_dict)
+
     for filename in pdf_files:
-        unnormlaize_pdf_dict=ResumeSegmenter.read_pdf_miner_chars(filename)
-        normlaize_pdf_dict=ResumeSegmenter.text_normalize(unnormlaize_pdf_dict)
-        ResumeSegmenter.update_text_normalize(normlaize_pdf_dict)
-        data[filename.split('\\')[-1].split('.')[0]]=normlaize_pdf_dict.copy()
-    for lb_file in labeled_files:
-        f = open(lb_file, "r")
-        result=f.read()
+        unnormlaized_pdf_dict = ResumeSegmenter.readPDFMinerChars(filename)
+        normlaized_pdf_dict = ResumeSegmenter.textNormalize(unnormlaized_pdf_dict)
+        ResumeSegmenter.updateTextNormalize(normlaized_pdf_dict)
+        data[filename.split('\\')[-1].split('.')[0]] = normlaized_pdf_dict.copy()
+
+    for labeled_file in labeled_files:
+        f = open(labeled_file, "r")
+        result = f.read()
         final_result=result.split('\n')
-        y_data[lb_file.split('\\')[-1].split('.')[0]]=final_result.copy()
+        y_data[labeled_file.split('\\')[-1].split('.')[0]] = final_result.copy()
+
     for cv in y_data:
-        y=y_data[cv]
+        y = y_data[cv]
         for index in range(len(y)):
             data[cv][index].append(y[index])
     return data
@@ -68,13 +73,13 @@ def createdataset(labeled_files_dic,pdf_files_dic):
 #First paramter is the labeled CVs dictionary.
 #Second paramter is the raw CVs dictionary.
 #Calls the previous function to get the data and save it.
-def dumpdataset(labeled_files_dic,pdf_files_dic):
-    data=createdataset(labeled_files_dic,pdf_files_dic)
+def dumpdataset(labeled_files_dict, pdf_files_dict):
+    data = createDataset(labeled_files_dict, pdf_files_dict)
     with open('PersonalResume.pickle', 'wb') as handle:
-        pickle.dump(data, handle, protocol=pickle.HIGHEST_PROTOCOL)
+        pickle.dump(data, handle, protocol = pickle.HIGHEST_PROTOCOL)
 
 ##This function takes no parameter.
 #Loads the data by using (pickle) library.
-def loaddataset():
+def loadDataset():
     with open('PersonalResume.pickle', 'rb') as handle:
         return pickle.load(handle)
