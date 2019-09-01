@@ -1,9 +1,15 @@
+#We used the following libraries:
+
+#collections: This library used for getting the default dictionary.
+
+#We also used the "ResumeHelper" and the "ResumeSegmenter" classes that we have created.
+
 from collections import defaultdict
 
 import ResumeHelper
 import ResumeSegmenter
 
-
+#Converts a list of dictionaries to a vector contains a numbers representing the features.
 def numericFeatures(feat):
     Normalized_Feat = []
 
@@ -49,6 +55,7 @@ def numericFeatures(feat):
     Normalized_Feat.append(feat['prevtag'])
     return Normalized_Feat
 
+#Extracting the features for a specific section from the CV and that for getting the final result.
 def sentenceFeaturesExtractionForTest(sentences_info, paragraph_num, prev_x_result, prev_y_result):
     Contain_email       = False
     Contain_Phone       = False

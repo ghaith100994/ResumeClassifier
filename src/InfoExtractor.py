@@ -1,3 +1,12 @@
+#We used two libraries:
+#os: This library used for get operating system operations.
+#re: This library used for applying regular expression operations, for example (re.search) to find a specific text.
+#pandas: we used this library to help us with the plotting of the confusion matrix of the trained model.
+#typing: 
+#datetime: This library used for calculating experience month lenght.
+#relativedelta: 
+
+#We also used the "ResumeHelper", "ResumeSegmenter". "TrainingModel" and "utils" classes that we have created.
 
 import os
 import re
@@ -18,6 +27,7 @@ class InfoExtractor:
         self.classifier = TrainingModel.loadClassifier(model)
         self.SpacyModel = SpacyModelParser
     
+    #It transefers the PDF file to text and then it calls the trained model and that for doing the classification.
     def extractFromFile(self, filename):
         unnormlaized_pdf_dict = ResumeSegmenter.readPDFMinerChars(filename)
         normlaized_pdf_dict = ResumeSegmenter.textNormalize(unnormlaized_pdf_dict)
@@ -34,6 +44,8 @@ class InfoExtractor:
             y_data.append(self.classifier.predict(x_data)[-1])
         self.extractFromText(finalList, y_data)
 
+    #It calls all the functions responsible for fetching the personal information of the CV user, 
+    #and that applied on the output of the previous function
     def extractFromText(self, finalList, y_data):
         name   = None
         email  = None
@@ -121,6 +133,7 @@ class InfoExtractor:
         for exp in experienceset:
             print(" - " + ", ".join(exp))
 
+    #Find any person name inside the CV in the personal information section.
     def findName(self, text) -> Optional[str]:
         to_chain = False
         all_names = []
@@ -149,6 +162,7 @@ class InfoExtractor:
         else:
             return None
 
+    #Find any email inside the CV in the personal information section.
     def findEmail(self, text) -> Optional[str]:
         for sent in text:
             for sub_sent in sent[0]:
@@ -157,6 +171,7 @@ class InfoExtractor:
                     return Email
         return None   
 
+    #Find any phone number inside the CV in the personal information section.
     def findNumber(self, text) -> Optional[str]:
         for sent in text:
             for sub_sent in sent[0]:
@@ -165,6 +180,7 @@ class InfoExtractor:
                     return Number
         return None
     
+    #Find any city inside the CV in the personal information section.
     def findCity(self, text) -> Optional[str]:
         counter = Counter()
         for sent in text:
@@ -177,6 +193,7 @@ class InfoExtractor:
             return counter.most_common(1)[0][0]
         return None
 
+    #Find any gender inside the CV in the personal information section.
     def findGender(self, text) -> Optional[str]:
         for sent in text:
             for sub_sent in sent[0]:
@@ -185,6 +202,7 @@ class InfoExtractor:
                     return gender
         return None  
     
+    #Find any URL link inside the CV in the personal information section.
     def findLink(self, links, text):
         for sent in text:
             for sub_sent in sent[0]:
@@ -192,6 +210,7 @@ class InfoExtractor:
                 if(url != None):
                     links.append(url)
     
+    #Classify the words in the "Skills" section inside the CV to a class represent the actuall skills that the CV user skilled.
     def extractSkills(self, skillset, text) -> List[str]:
         data = pd.read_csv(
             os.path.join(os.path.dirname(__file__), "wordList/skills.csv")
@@ -212,6 +231,7 @@ class InfoExtractor:
                     if token in skills:
                         skillset.append(token)
 
+    #Classify the words in the "Education" section inside the CV to the following classes (Degree, Major, University).
     def extractEducations(self, eduicationset, text) -> List[str]:
         degree_category = [token.lower().strip() for token in ResumeSegmenter.readCSVKeywords('wordList\\degree_category.csv')]
         educational_major = [token.lower().strip() for token in ResumeSegmenter.readCSVKeywords('wordList\\educational_major.csv')]
@@ -253,6 +273,7 @@ class InfoExtractor:
         if(len(chunks) != 0):
             eduicationset.append(chunks)
  
+    #Extract all of the projects that the CV user had done i his career.
     def extractProjects(self, projectset, text) -> List[str]:
         project_segment = [token.lower().strip() for token in ResumeSegmenter.readCSVKeywords('wordList\\project_segment.csv')]
         unique_char_regex = "[^\sA-Za-z0-9\.\/\(\)\,\-\|]+"
@@ -276,6 +297,7 @@ class InfoExtractor:
         if(len(chunks) != 0):
             projectset.append(chunks)
 
+    #Extract an experience or a service that the CV user had gained in his life.
     def extractExperience(self, experienceset, text) -> List[str]:
         project_segment = [token.lower().strip() for token in ResumeSegmenter.readCSVKeywords('wordList\\work_experience_segment.csv')]
         unique_char_regex = "[^\sA-Za-z0-9\.\/\(\)\,\-\|]+"
@@ -297,6 +319,7 @@ class InfoExtractor:
         if(len(chunks) != 0):
             experienceset.append(chunks)
 
+    #Extract all of the experiences and services that the CV user had gained in his life by calling the previous function for each experience.
     def getTotalExperience(self, experience_list) -> int:
         """
         Wrapper function to extract total months of experience from a resume
@@ -346,6 +369,7 @@ class InfoExtractor:
         total_experience_in_months = sum(experience_num_list)
         return total_experience_in_months
 
+    #Extract all of the experiences and services that the CV user had gained in his life by calling the previous function for all experiences and then formatted them on their dates.
     def getTotalExperienceFormatted(self, exp_list) -> str:
         months = self.getTotalExperience(exp_list)
         if months < 12:
@@ -355,6 +379,7 @@ class InfoExtractor:
         months = months % 12
         return str(years) + " years " + str(months) + " months"
 
+    #Extracting the exact months number of an experience.
     def getNumberOfMonths(self,datepair) -> int:
         """
         Helper function to extract total months of experience from a resume
